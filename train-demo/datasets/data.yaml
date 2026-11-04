@@ -1,0 +1,8 @@
+# Stierne er relative til mappen, hvor denne fil ligger
+train: train/images
+val: valid/images
+test: test/images
+
+# Antal klasser og deres navne. Rækkefølgen bestemmer klassenummeret (circle = 0, maltese = 1 ...)
+nc: 6
+names: ['circle', 'maltese', 'nothing', 'square', 'star', 'temple']
