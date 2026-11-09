@@ -24,15 +24,16 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showguides="true"
-     inkscape:zoom="2.4285891"
-     inkscape:cx="172.52816"
-     inkscape:cy="106.23452"
+     inkscape:zoom="1.7172718"
+     inkscape:cx="187.50672"
+     inkscape:cy="103.36162"
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1">
+     inkscape:current-layer="layer1"
+     showgrid="false">
     <sodipodi:guide
        position="39.904621,258.48203"
        orientation="1,0"
@@ -43,6 +44,11 @@
        orientation="0,-1"
        id="guide4"
        inkscape:locked="false" />
+    <sodipodi:guide
+       position="22.186353,255.86281"
+       orientation="0,-1"
+       id="guide1"
+       inkscape:locked="false" />
   </sodipodi:namedview>
   <defs
      id="defs1" />
@@ -51,38 +57,40 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.247993;stroke-opacity:1"
        id="rect4"
-       width="40"
-       height="60"
-       x="0.32683587"
-       y="0.10894528" />
+       width="40.052006"
+       height="40.94709"
+       x="0.30083233"
+       y="0.082941748" />
     <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-opacity:1;paint-order:stroke fill markers"
+       style="fill:#000000;fill-opacity:0.504237;stroke:#000000;stroke-width:0.309868;stroke-dasharray:none;stroke-opacity:0.504237;paint-order:stroke fill markers"
        id="rect10"
-       width="3.3773036"
-       height="31.376242"
-       x="18.084919"
-       y="13.291325" />
+       width="4.0204263"
+       height="28.058023"
+       x="26.914703"
+       y="-12.370473"
+       transform="matrix(0.73600361,0.67697761,-0.71403966,0.70010525,0,0)" />
     <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-opacity:1;paint-order:stroke fill markers"
+       style="fill:#000000;fill-opacity:0.504237;stroke:#000000;stroke-width:0.293528;stroke-dasharray:none;stroke-opacity:0.504237;paint-order:stroke fill markers"
        id="rect11"
-       width="25.711088"
-       height="3.7041397"
-       x="6.6456623"
-       y="26.037922" />
+       width="28.970173"
+       height="3.1402171"
+       x="14.388366"
+       y="-0.62839574"
+       transform="matrix(0.71901482,0.69499474,-0.69645445,0.717601,0,0)" />
     <rect
-       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-opacity:1;paint-order:stroke fill markers"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.248456;stroke-opacity:1;paint-order:stroke fill markers"
        id="rect12"
-       width="40"
-       height="60"
-       x="44.88546"
-       y="0.10894528" />
+       width="40.051544"
+       height="41.1007"
+       x="44.859688"
+       y="0.083173387" />
     <circle
-       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.2;stroke-opacity:1;paint-order:stroke fill markers;stroke-dasharray:none"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.2;stroke-dasharray:none;stroke-opacity:0.49576271;paint-order:stroke fill markers"
        id="path12"
-       cx="64.767975"
-       cy="27.508684"
+       cx="65.230194"
+       cy="20.267305"
        r="11.929508" />
   </g>
 </svg>

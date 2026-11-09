@@ -178,3 +178,4 @@ CLAUDE.md
 train-demo/datasets/**/labels.cache
 train-demo/annotated.jpg
 Konrad/
+.uv-cache/

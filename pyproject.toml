@@ -1,20 +1,15 @@
-[project]
-name = "machine-learning-yolo"
+﻿[project]
+name = "ddu-tic-tac-toe"
 version = "0.1.0"
-description = "Teknikfag DDU: forløb om machine learning og objektgenkendelse med YOLO"
+description = "Kryds og bolle med webcam og YOLO"
 readme = "README.md"
-authors = [
-    { name = "MKM", email = "mkm@slotshaven.dk" }
-]
 requires-python = ">=3.13"
 dependencies = [
-    "flask>=3.1.3",
-    "lap>=0.5.13",
+    "numpy>=2.5.4",
     "opencv-python>=5.0.0.93",
-    "requests>=2.34.2",
+    "pillow>=12.3.0",
     "ultralytics>=8.4.177",
 ]
 
 [tool.uv]
-# Projektet er en samling scripts, ikke en Python-pakke, der skal bygges
 package = false
