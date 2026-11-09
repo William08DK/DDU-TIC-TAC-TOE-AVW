@@ -20,7 +20,9 @@ def outcome(board):
 def score(board, turn):
     result = outcome(board)
     if result:
-        return {"O": 1, "X": -1, "draw": 0}[result]
+        # En sejr er altid bedre end uafgjort. Flere tomme felter betyder
+        # en hurtigere sejr, så computeren afslutter frem for at trække tiden.
+        return {"O": 1, "X": -1, "draw": 0}[result] * (1 + board.count(""))
     values = [score(board[:i] + (turn,) + board[i + 1:],
                     "X" if turn == "O" else "O")
               for i in ORDER if not board[i]]
@@ -28,7 +30,11 @@ def score(board, turn):
 
 
 def best_move(board):
-    """Minimax gennemregner alle mulige fortsættelser."""
+    """Vælg et optimalt træk: vind hurtigst muligt, ellers sikr uafgjort.
+
+    Fra et tomt bræt kan O ikke tabe, når X starter og begge følger reglerne.
+    Strategien kræver intet datasæt; YOLO bruges kun til brikgenkendelse.
+    """
     board = tuple(board)
     if outcome(board):
         return None

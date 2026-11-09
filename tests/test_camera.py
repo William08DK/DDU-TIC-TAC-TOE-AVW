@@ -15,6 +15,14 @@ def result(*detections):
 
 
 class CameraTests(unittest.TestCase):
+    def test_camera_detections_are_mapped_to_the_marked_board(self):
+        # Brættet fylder kun en del af billedet. Andre figurer udenfor ignoreres.
+        detected = result((0, .35, .35), (1, .55, .55), (3, .05, .05))
+        detected.orig_shape = (1000, 1000)
+        matrix = transform([(300, 300), (600, 300), (600, 600), (300, 600)])
+        board = read_board(detected, "maltese", "circle", matrix)
+        self.assertEqual(board, ["X", "", "", "", "", "", "", "", "O"])
+
     def test_switch_camera_requires_working_video(self):
         current = Mock()
         candidate = Mock()
