@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   sodipodi:docname="tegning_krys_og_bolle.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="2.4285891"
+     inkscape:cx="172.52816"
+     inkscape:cy="106.23452"
+     inkscape:window-width="1920"
+     inkscape:window-height="991"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="39.904621,258.48203"
+       orientation="1,0"
+       id="guide3"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="16.485693,236.91197"
+       orientation="0,-1"
+       id="guide4"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Lag 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-opacity:1"
+       id="rect4"
+       width="40"
+       height="60"
+       x="0.32683587"
+       y="0.10894528" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10"
+       width="3.3773036"
+       height="31.376242"
+       x="18.084919"
+       y="13.291325" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect11"
+       width="25.711088"
+       height="3.7041397"
+       x="6.6456623"
+       y="26.037922" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect12"
+       width="40"
+       height="60"
+       x="44.88546"
+       y="0.10894528" />
+    <circle
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.2;stroke-opacity:1;paint-order:stroke fill markers;stroke-dasharray:none"
+       id="path12"
+       cx="64.767975"
+       cy="27.508684"
+       r="11.929508" />
+  </g>
+</svg>
