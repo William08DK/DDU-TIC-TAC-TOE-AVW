@@ -179,3 +179,6 @@ train-demo/datasets/**/labels.cache
 train-demo/annotated.jpg
 Konrad/
 .uv-cache/
+train-demo/egne-brikker/images/
+train-demo/egne-brikker/labels/
+train-demo/egne-brikker/**/*.cache

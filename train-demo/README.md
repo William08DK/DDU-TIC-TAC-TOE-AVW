@@ -1,15 +1,27 @@
-﻿# Træning af brikgenkendelse
+﻿# Træning af vores egne brikker
 
-Datasættet fra læreren er bevaret med klasserne `circle`, `maltese`, `nothing`, `square`, `star` og `temple`. Spillet bruger som standard `maltese` som X og `circle` som O.
+614 originalbilleder i `../Kryds-og-bolle-billeder/` er matchet med 614 Make Sense-labels i `../labels_my-project-name_2026-11-11-10-08-19/`. Klasse 0 er `kryds`; klasse 1 er `bolle`. Originalerne er bevaret.
 
-Kør fra projektets hovedmappe:
+Datasættet er klargjort i `egne-brikker/` med **475 træningsbilleder og 139 valideringsbilleder**. Begge grupper indeholder kryds og boller. Træningsscriptet bruger nu dette datasæt frem for lærerens.
+
+Start fra projektets hovedmappe:
 
 ```powershell
 uv run train-demo/model-train.py
 ```
 
-Træningen bruger `datasets/data.yaml` og gemmer modellen under `train-demo/runs/detect/train/weights/best.pt`. Ved senere træninger kan Ultralytics vælge en ny mappe. Brug den udskrevne sti med `main.py --model STI`.
+Scriptet træner i op til 50 runder og kan stoppe tidligere efter 10 runder uden forbedring. Basismodellen er `train-demo/yolo26n.pt`. Den bedste model gemmes som `train-demo/runs/detect/egne-brikker/weights/best.pt`. Ved senere træninger kan resultatmappen få et nummer; brug stien, træningen udskriver.
 
-`EPOCHS` i scriptet bestemmer antal træningsrunder. Basismodellen `yolo26n.pt` hentes automatisk, hvis den mangler. Det kræver internet første gang.
+Start spillet med den nye model:
 
-De oprindelige billeder viser et 3 × 5-bræt. Test derfor genkendelsen på jeres faktiske 3 × 3-bræt. Til almindelige X/O-brikker skal I annotere nye billeder, opdatere klasser og stier i `datasets/data.yaml`, træne igen og vælge de nye klassenavne med `--x-class` og `--o-class`.
+```powershell
+uv run main.py --camera 1 --model "train-demo/runs/detect/egne-brikker/weights/best.pt" --x-class kryds --o-class bolle
+```
+
+## Klargøring og opdeling
+
+`prepare_data.py` matcher filnavne og kontrollerer labelkoordinater. Det gemmer træningskopier på højst 1280 pixels på den længste side. Nabofotos i blokke på 20 holdes samlet, og opdelingen fordeles omtrent 80/20 mellem træning og validering. `egne-brikker/split.json` dokumenterer opdelingen. Originaler og lærerens gamle datasæt ændres ikke.
+
+Datasættet er allerede oprettet. Klargøringsscriptet afviser at overskrive en eksisterende `egne-brikker`-mappe. Træningskopier og modelvægte er ikke med i Git.
+
+Billederne indeholder næsten udelukkende én brik ad gangen. Test derfor modellen med flere brikker og på det tomme 3 × 3-bræt fra USB-kameraet. Tag nye optagelser til denne sluttest; validering fra samme fotosession kan være lettere end det faktiske spil. Tilføj senere billeder med tomt bræt og blandede brikker, hvis genkendelsen giver fejl.
