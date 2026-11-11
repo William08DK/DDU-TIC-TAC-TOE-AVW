@@ -11,9 +11,9 @@ class VisionTests(unittest.TestCase):
     def test_debug_uses_small_inference_and_draws_on_the_current_frame(self):
         box = SimpleNamespace(cls=np.array(0), conf=np.array(.9),
                               xyxy=np.array([[40, 60, 100, 120]]))
-        model = Mock(return_value=[SimpleNamespace(names={0: "circle"}, boxes=[box])])
+        model = Mock(return_value=[SimpleNamespace(names={0: "bolle"}, boxes=[box])])
         old_frame = np.zeros((200, 200, 3), dtype=np.uint8)
-        detections = detect_debug(model, old_frame, .5, "maltese", "circle")
+        detections = detect_debug(model, old_frame, .5, "kryds", "bolle")
         self.assertEqual(model.call_args.kwargs["imgsz"], 320)
         current_frame = np.full((400, 400, 3), 70, dtype=np.uint8)
         annotated = draw_debug(current_frame, detections)
@@ -30,19 +30,18 @@ class VisionTests(unittest.TestCase):
         np.testing.assert_array_equal(orient_frame(frame, 4), frame)
         self.assertTrue(orient_frame(frame, 1, True).flags.c_contiguous)
 
-    def test_debug_includes_game_pieces_and_unrelated_classes(self):
+    def test_debug_labels_our_crosses_and_circles(self):
         image = np.zeros((300, 600, 3), dtype=np.uint8)
         boxes = [SimpleNamespace(cls=np.array(i), conf=np.array(.9),
                                  xyxy=np.array([[20 + i * 180, 40, 150 + i * 180, 200]]))
-                 for i in range(3)]
-        result = SimpleNamespace(names={0: "maltese", 1: "circle", 2: "person"}, boxes=boxes)
+                 for i in range(2)]
+        result = SimpleNamespace(names={0: "kryds", 1: "bolle"}, boxes=boxes)
         def model(frame, **kwargs):
             return [result]
-        annotated, findings = debug_detection(model, image, .5, "maltese", "circle")
-        self.assertEqual(len(findings), 3)
+        annotated, findings = debug_detection(model, image, .5, "kryds", "bolle")
+        self.assertEqual(len(findings), 2)
         self.assertIn("Kryds / X", findings[0])
         self.assertIn("Bolle / O", findings[1])
-        self.assertIn("person", findings[2])
         self.assertTrue(all("90%" in item for item in findings))
         self.assertTrue(np.any(annotated))
         self.assertFalse(np.any(image))  # Originalbilledet til spillet er urørt.

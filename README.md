@@ -22,14 +22,11 @@ Du kan også installere med `python -m pip install -r requirements.txt` og start
 
 **Rotér 90°** drejer kamerabilledet med uret. **Spejlvend** vender det vandret; klik igen for at slå spejling fra. Vælg orienteringen inden spillet: ændringer starter et nyt spil og kræver, at brættet tømmes og hjørnerne markeres igen. Genkendelsen bruger samme orientering som visningen.
 
-**Debug · live** åbner et separat vindue med løbende genkendelse: kasser omkring alle fund, klassenavne og modellens sikkerhed i procent. Spilbrikker vises også som **Kryds / X** eller **Bolle / O**, hvis de matcher de valgte brikklasser. Debug godkender ikke træk; brug fortsat Aflæs brættet i spillet.
+**Debug · live** åbner et separat vindue med vores egen models genkendelse af **Kryds / X** og **Bolle / O**, kasser omkring brikkerne og sikkerhed i procent. Debug bruger de samme modelvægte som spillet. Debug godkender ikke træk; brug fortsat Aflæs brættet i spillet.
 
-- **Spilbrikker** bruger spillets valgte model og viser alle dens klasser, også andre figurer end X/O.
-- **Hverdagsting** bruger den lokale generelle model `yolo26n.pt`, der kan genkende sine trænede kategorier af hverdagsting. Den kan ikke genkende vilkårlige objekter eller nye speciallavede brikker uden relevant træning. En anden generel model kan vælges med `--debug-model "STI/TIL/model.pt"`.
+Debug analyserer hele det orienterede kamerabillede, ligesom spillets aflæsning. Kameravideoen opdateres uafhængigt af genkendelsen, der kører i baggrunden uden kø af gamle billeder. Kasserne viser seneste analyse og skjules, når analysebilledet er over et sekund gammelt; de kan derfor halte lidt efter objekter i bevægelse. Analysetiden vises i debugvinduet.
 
-Før hjørnemarkering analyserer debug hele kamerabilledet; derefter analyserer det det udrettede bræt. Kameravideoen opdateres uafhængigt af genkendelsen, der kører i baggrunden uden kø af gamle billeder. Kasserne viser seneste analyse og skjules, når analysebilledet er over et sekund gammelt; de kan derfor halte lidt efter objekter i bevægelse. Analysetiden vises i debugvinduet.
-
-Debug bruger som standard 320 pixels til analysen for at spare regnekraft. Små detaljer kan genkendes bedre med `--debug-imgsz 640`, som også kræver mere regnetid; 480 er et mellemtrin. Det ændrer ikke opløsningen ved spillets almindelige aflæsning. Hastigheden afhænger af computeren. Hverdagsting kræver, at den generelle model findes lokalt; programmet henter den ikke automatisk.
+Debug bruger som standard 320 pixels til analysen for at spare regnekraft. Små detaljer kan genkendes bedre med `--debug-imgsz 640`, som også kræver mere regnetid; 480 er et mellemtrin. Det ændrer ikke opløsningen ved spillets almindelige aflæsning. Hastigheden afhænger af computeren.
 
 ## Sådan spiller I
 
@@ -47,18 +44,17 @@ Det lille bræt til højre viser sidst godkendte træk. En stiplet grøn cirkel 
 
 Ved spillets aflæsning genkendes brikkerne i det fulde, orienterede kamerabillede. Deres midtpunkter overføres derefter til det markerede 3 × 3-bræt. Fund uden for brættet ignoreres. Det undgår, at perspektivopretningen og forstørrelsen af brikkerne forringer modellens genkendelse.
 
-Den medfølgende lærer-model er trænet på figurer, ikke almindeligt tegnede X og O. Som standard bruger vi **maltese** (kors) til dine X og **circle** (cirkel) til computerens O. Brug de fysiske figurer fra datasættet. En model til tegnede kryds og boller skal trænes på billeder af disse.
+Spillet bruger vores model, trænet på de 614 egne billeder og Make Sense-markeringer. Der er kun to klasser: **kryds** og **bolle**. Standardmodellen ligger i `train-demo/runs/detect/egne-brikker/weights/best.pt`, så almindelig opstart kræver kun `uv run main.py`.
 
-Andre klassenavne kan vælges sådan:
+Træn modellen igen med:
 
 ```powershell
-uv run main.py --x-class star --o-class circle
-uv run main.py --model train-demo/runs/detect/train-2/weights/best.pt
+uv run train-demo/model-train.py
 ```
 
-Standardmodellen findes i `train-demo/runs/detect/train/weights/best.pt`. Modelvægte er lokale og følger **ikke** med i Git. På en ny computer skal I kopiere modellen til den sti eller træne den med `uv run train-demo/model-train.py`.
+Ved ny træning kan resultatmappen få et nummer. Brug da `uv run main.py --model "STI/TIL/best.pt"`. Den valgte model skal have præcis klasserne `kryds` og `bolle`. Modelvægte er lokale og følger **ikke** med i Git. På en ny computer skal I kopiere modellen til standardstien eller træne den selv. Se [træningsvejledningen](train-demo/README.md).
 
-Aflæsningen bruger brikkernes midtpunkter. Hold brikkerne midt i felterne og brug jævnt lys. Ved flere fund i samme felt eller andre figurer afvises aflæsningen. Overses en helt ny brik, så prøv igen; en forkert genkendt brik kan kræve **R** og et nyt spil. Modellen skal afprøves med jeres kamera og 3 × 3-bræt, fordi træningsbillederne kommer fra lærerens 3 × 5-bræt. `--confidence 0.6` ændrer tærsklen for genkendelse (standard: 0.5).
+Aflæsningen bruger brikkernes midtpunkter. Hold brikkerne midt i felterne og brug jævnt lys. Ved flere fund i samme felt afvises aflæsningen. Overses en helt ny brik, så prøv igen; en forkert genkendt brik kan kræve **R** og et nyt spil. Test også med flere brikker samtidig og et tomt bræt. `--confidence 0.6` ændrer tærsklen for genkendelse (standard: 0.5).
 
 Hvis kameraet ikke åbner, prøv `--camera 1`, luk andre kamera-apps og kontrollér Windows' kameratilladelser.
 

@@ -23,7 +23,7 @@ def debug_font():
 
 
 def detect_debug(model, frame, confidence, x_class, o_class, imgsz=320):
-    """Returnér fund uden at binde visningen til det gamle analysebillede."""
+    """Find vores brikker uden at binde visningen til det gamle analysebillede."""
     result = model(frame, conf=confidence, imgsz=imgsz, verbose=False)[0]
     height, width = frame.shape[:2]
     detections = []

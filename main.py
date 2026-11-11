@@ -14,7 +14,9 @@ from ui import GameWindow
 from vision import detect_debug, draw_debug, orient_frame
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_MODEL = ROOT / "train-demo/runs/detect/train/weights/best.pt"
+DEFAULT_MODEL = ROOT / "train-demo/runs/detect/egne-brikker/weights/best.pt"
+X_CLASS = "kryds"
+O_CLASS = "bolle"
 SIZE = 600
 
 
@@ -37,8 +39,6 @@ def read_board(result, x_class, o_class, board_matrix=None):
     board = [""] * 9
     for box in result.boxes:
         name = result.names[int(box.cls.item())]
-        if name == "nothing":
-            continue
         x, y, _, _ = box.xywhn[0].tolist()
         if board_matrix is not None:
             height, width = result.orig_shape
@@ -80,11 +80,7 @@ def main():
     parser = argparse.ArgumentParser(description="Kryds og bolle med webcam og YOLO")
     parser.add_argument("--camera", type=int, default=1)
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL)
-    parser.add_argument("--x-class", default="maltese", help="YOLO-klassen for dine X")
-    parser.add_argument("--o-class", default="circle", help="YOLO-klassen for computerens O")
     parser.add_argument("--confidence", type=float, default=.5)
-    parser.add_argument("--debug-model", type=Path, default=ROOT / "yolo26n.pt",
-                        help="Model til debugvisningens hverdagsting")
     parser.add_argument("--debug-imgsz", type=int, choices=(320, 480, 640), default=320,
                         help="Debugopløsning: 320 er hurtigst, 640 giver flere detaljer")
     args = parser.parse_args()
@@ -96,9 +92,8 @@ def main():
         parser.error("--camera skal være et kameraindeks fra 0 og opefter.")
     model = YOLO(str(args.model))
     names = set(model.names.values())
-    if (args.x_class == args.o_class or "nothing" in (args.x_class, args.o_class)
-            or not {args.x_class, args.o_class} <= names):
-        parser.error(f"Vælg to forskellige brikklasser fra {sorted(names - {'nothing'})}.")
+    if names != {X_CLASS, O_CLASS}:
+        parser.error("Modellen skal være trænet på vores to klasser: kryds og bolle.")
 
     cap = cv2.VideoCapture(args.camera)
     camera_index = args.camera
@@ -120,16 +115,17 @@ def main():
     debug_result_token = None
     debug_result_time = 0
     debug_info = "Indlæser model …"
-    debug_models = {}
+    debug_model = None
     executor = ThreadPoolExecutor(max_workers=1)
 
-    def analyze_debug(path, image):
-        # Separate modeller i én baggrundstråd holder liveanalyse adskilt fra spillet.
-        if path not in debug_models:
-            debug_models[path] = YOLO(str(path))
+    def analyze_debug(image):
+        nonlocal debug_model
+        # Samme modelvægte som spillet; separat instans til baggrundstråden.
+        if debug_model is None:
+            debug_model = YOLO(str(args.model))
         start = monotonic()
-        detections = detect_debug(debug_models[path], image, args.confidence,
-                                  args.x_class, args.o_class, args.debug_imgsz)
+        detections = detect_debug(debug_model, image, args.confidence,
+                                  X_CLASS, O_CLASS, args.debug_imgsz)
         return detections, monotonic() - start
 
     def on_point(x, y):
@@ -164,9 +160,6 @@ def main():
                 window.open_debug()
             else:
                 window.close_debug()
-        elif action == "debug_mode":
-            debug_revision += 1
-            window.clear_debug("Indlæser den valgte model …")
         elif action == "camera":
             selected = int(window.camera.get().split()[-1])
             if selected != camera_index or not camera_ready:
@@ -199,7 +192,7 @@ def main():
             try:
                 # Genkend før perspektivopretningen ændrer brikkernes udseende.
                 result = model(camera_image, imgsz=640, conf=args.confidence, verbose=False)[0]
-                status = game.read(read_board(result, args.x_class, args.o_class, matrix))
+                status = game.read(read_board(result, X_CLASS, O_CLASS, matrix))
             except (ValueError, RuntimeError, cv2.error) as error:
                 status = str(error)
             window.video.focus_set()
@@ -256,25 +249,16 @@ def main():
                         debug_result_time = 0
                 debug_future = None
             if camera_ready and debug_future is None and monotonic() - last_debug_time >= .08:
-                path = args.debug_model if window.debug_mode.get() == "Hverdagsting" else args.model
-                if path.is_file():
-                    debug_token = current_token
-                    debug_future = executor.submit(analyze_debug, path,
-                                                   (board_image if board_image is not None else frame).copy())
-                else:
-                    debug_info = f"Modellen findes ikke: {path}. Vælg Spilbrikker eller angiv --debug-model."
-                    debug_result_token = current_token
-                    debug_detections = []
-                    debug_result_time = 0
+                debug_token = current_token
+                debug_future = executor.submit(analyze_debug, frame.copy())
                 last_debug_time = monotonic()
             if camera_ready:
                 fresh = debug_result_token == current_token and monotonic() - debug_result_time < 1
                 detections = debug_detections if fresh else []
-                source = board_image if board_image is not None else frame
                 info = debug_info if debug_result_token == current_token else "Livevideo · afventer genkendelse …"
                 if not fresh and debug_result_token == current_token:
                     info += " · afventer nye fund"
-                window.show_debug(draw_debug(source, detections),
+                window.show_debug(draw_debug(frame, detections),
                                   [label for label, _ in detections], info)
         elif debug_future is not None and debug_future.done():
             debug_future = None

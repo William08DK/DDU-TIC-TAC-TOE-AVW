@@ -8,7 +8,7 @@ from main import read_board, switch_camera, transform
 
 
 def result(*detections):
-    return SimpleNamespace(names={0: "maltese", 1: "circle", 2: "nothing", 3: "star"},
+    return SimpleNamespace(names={0: "kryds", 1: "bolle", 2: "nothing", 3: "star"},
                            boxes=[SimpleNamespace(cls=np.array(c),
                                                   xywhn=np.array([[x, y, .1, .1]]))
                                   for c, x, y in detections])
@@ -20,7 +20,7 @@ class CameraTests(unittest.TestCase):
         detected = result((0, .35, .35), (1, .55, .55), (3, .05, .05))
         detected.orig_shape = (1000, 1000)
         matrix = transform([(300, 300), (600, 300), (600, 600), (300, 600)])
-        board = read_board(detected, "maltese", "circle", matrix)
+        board = read_board(detected, "kryds", "bolle", matrix)
         self.assertEqual(board, ["X", "", "", "", "", "", "", "", "O"])
 
     def test_switch_camera_requires_working_video(self):
@@ -48,14 +48,14 @@ class CameraTests(unittest.TestCase):
                 candidate.release.assert_called_once()
 
     def test_detection_positions(self):
-        board = read_board(result((0, .1, .1), (1, .8, .8), (2, .5, .5)),
-                           "maltese", "circle")
+        board = read_board(result((0, .1, .1), (1, .8, .8)),
+                           "kryds", "bolle")
         self.assertEqual(board, ["X", "", "", "", "", "", "", "", "O"])
 
     def test_ambiguous_and_unknown_detections_rejected(self):
         for detections in (((0, .1, .1), (1, .2, .2)), ((3, .5, .5),)):
             with self.assertRaises(ValueError):
-                read_board(result(*detections), "maltese", "circle")
+                read_board(result(*detections), "kryds", "bolle")
 
     def test_perspective_maps_corners(self):
         import cv2

@@ -15,7 +15,7 @@ Scriptet træner i op til 50 runder og kan stoppe tidligere efter 10 runder uden
 Start spillet med den nye model:
 
 ```powershell
-uv run main.py --camera 1 --model "train-demo/runs/detect/egne-brikker/weights/best.pt" --x-class kryds --o-class bolle
+uv run main.py
 ```
 
 ## Klargøring og opdeling

@@ -119,12 +119,8 @@ class GameWindow:
         controls = tk.Frame(self.debug_window, bg=BG)
         controls.pack(fill="x", padx=18, pady=14)
         self.label(controls, "Genkendelse", 12, bold=True, bg=BG).pack(side="left")
-        self.debug_mode = ttk.Combobox(controls, state="readonly", width=24,
-                                       values=("Spilbrikker", "Hverdagsting"))
-        self.debug_mode.current(0)
-        self.debug_mode.pack(side="right")
-        self.debug_mode.bind("<<ComboboxSelected>>", lambda event: self.on_action("debug_mode"))
-        self.label(self.debug_window, "Liveanalyse ændrer ikke spillets træk. Viser kun klasser, modellen er trænet til.",
+        self.label(controls, "Kryds + bolle", 10, GREEN, bg=BG).pack(side="right")
+        self.label(self.debug_window, "Vores egen model · kryds og bolle. Liveanalyse ændrer ikke spillets træk.",
                    10, MUTED, bg=BG).pack(padx=18, anchor="w")
         self.debug_info = self.label(self.debug_window, "Starter genkendelse …", 10, MUTED, bg=BG)
         self.debug_info.configure(wraplength=780, justify="left", height=3, anchor="nw")
