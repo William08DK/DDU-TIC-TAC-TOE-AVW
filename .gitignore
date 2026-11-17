@@ -182,3 +182,6 @@ Konrad/
 train-demo/egne-brikker/images/
 train-demo/egne-brikker/labels/
 train-demo/egne-brikker/**/*.cache
+train-demo/nye-brikker/images/
+train-demo/nye-brikker/labels/
+train-demo/nye-brikker/**/*.cache

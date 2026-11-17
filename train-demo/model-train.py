@@ -4,7 +4,7 @@ from ultralytics import YOLO
 
 DIR = Path(__file__).resolve().parent
 EPOCHS = 50
-DATA = DIR / "egne-brikker/data.yaml"
+DATA = DIR / "nye-brikker/data.yaml"
 
 if __name__ == "__main__":
     if not DATA.is_file():
@@ -17,5 +17,5 @@ if __name__ == "__main__":
         patience=10,
         workers=0,
         project=str(DIR / "runs/detect"),
-        name="egne-brikker",
+        name="nye-brikker",
     )

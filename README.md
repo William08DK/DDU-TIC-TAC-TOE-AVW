@@ -52,6 +52,8 @@ Træn modellen igen med:
 uv run train-demo/model-train.py
 ```
 
+Træningsscriptet bruger nu de nye brikker fra `Kryds-der-boller` og `Kryds-der-boller-data`, klargjort i `train-demo/nye-brikker/`. Efter træningen vælges den nye model med `uv run main.py --model "train-demo/runs/detect/nye-brikker/weights/best.pt"`. Den tidligere model og det tidligere datasæt er bevaret.
+
 Ved ny træning kan resultatmappen få et nummer. Brug da `uv run main.py --model "STI/TIL/best.pt"`. Den valgte model skal have præcis klasserne `kryds` og `bolle`. Modelvægte er lokale og følger **ikke** med i Git. På en ny computer skal I kopiere modellen til standardstien eller træne den selv. Se [træningsvejledningen](train-demo/README.md).
 
 Aflæsningen bruger brikkernes midtpunkter. Hold brikkerne midt i felterne og brug jævnt lys. Ved flere fund i samme felt afvises aflæsningen. Overses en helt ny brik, så prøv igen; en forkert genkendt brik kan kræve **R** og et nyt spil. Test også med flere brikker samtidig og et tomt bræt. `--confidence 0.6` ændrer tærsklen for genkendelse (standard: 0.5).
