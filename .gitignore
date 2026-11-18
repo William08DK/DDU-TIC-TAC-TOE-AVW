@@ -179,9 +179,13 @@ train-demo/datasets/**/labels.cache
 train-demo/annotated.jpg
 Konrad/
 .uv-cache/
-train-demo/egne-brikker/images/
-train-demo/egne-brikker/labels/
 train-demo/egne-brikker/**/*.cache
-train-demo/nye-brikker/images/
-train-demo/nye-brikker/labels/
 train-demo/nye-brikker/**/*.cache
+tests/
+tests/test_camera.py
+tests/test_game.py
+tests/test_prepare_data.py
+tests/test_ui.py
+tests/test_vision.py
+train-demo/model-train.py
+train-demo/prepare_data.py

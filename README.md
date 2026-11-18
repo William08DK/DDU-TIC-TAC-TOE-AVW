@@ -26,7 +26,7 @@ Du kan også installere med `python -m pip install -r requirements.txt` og start
 
 Debug analyserer hele det orienterede kamerabillede, ligesom spillets aflæsning. Kameravideoen opdateres uafhængigt af genkendelsen, der kører i baggrunden uden kø af gamle billeder. Kasserne viser seneste analyse og skjules, når analysebilledet er over et sekund gammelt; de kan derfor halte lidt efter objekter i bevægelse. Analysetiden vises i debugvinduet.
 
-Debug bruger som standard 320 pixels til analysen for at spare regnekraft. Små detaljer kan genkendes bedre med `--debug-imgsz 640`, som også kræver mere regnetid; 480 er et mellemtrin. Det ændrer ikke opløsningen ved spillets almindelige aflæsning. Hastigheden afhænger af computeren.
+Spil og debug bruger samme analyseopløsning, som standard 320 pixels. Små detaljer kan genkendes bedre med `--imgsz 640`, som også kræver mere regnetid; 480 er et mellemtrin. Indstillingen gælder begge visninger, og den tidligere genvej `--debug-imgsz` virker også. Hastigheden afhænger af computeren.
 
 ## Sådan spiller I
 
@@ -39,6 +39,8 @@ Debug bruger som standard 320 pixels til analysen for at spare regnekraft. Små 
 **Nyt spil** / **R** starter et nyt spil: fjern alle brikker, før du lægger den første X. **Markér hjørner igen** / **K** lader jer markere brættet igen, hvis kameraet flyttes. Spillets træk bevares ved ny hjørnemarkering. **Q** eller **Esc** lukker.
 
 Det lille bræt til højre viser sidst godkendte træk. En stiplet grøn cirkel viser, hvor computerens næste brik skal placeres. Ved en fejlaflæsning beholdes tilstanden, og du kan aflæse igen. Programmet kræver ét nyt træk ad gangen; aflæs derfor også efter at have lagt computerens brik.
+
+At debug genkender brikker betyder ikke nødvendigvis, at et træk kan godkendes. Spillet kræver korrekt hjørnemarkering og en lovlig tur. Ved start skal der kun ligge én X og ingen O. Spillets beskeder skelner mellem ingen genkendte brikker, fund uden for det markerede bræt og en forkert startopstilling.
 
 ## Brikker og model
 

@@ -3,6 +3,8 @@ from pathlib import Path
 import unittest
 
 
+# Træningsmappen har bindestreg i navnet. Indlæs derfor filen ud fra dens sti
+# i stedet for en almindelig import. Det starter ikke selve klargøringen.
 spec = importlib.util.spec_from_file_location(
     "prepare_data", Path(__file__).resolve().parents[1] / "train-demo/prepare_data.py")
 preparation = importlib.util.module_from_spec(spec)
@@ -11,6 +13,7 @@ spec.loader.exec_module(preparation)
 
 class PreparationTests(unittest.TestCase):
     def test_camera_copies_and_nearby_timestamps_share_group(self):
+        # Kopier og fotos fra samme tidsblok skal blive i samme del af datasættet.
         self.assertEqual(preparation.photo_group("WIN_20261116_13_14_18_Pro"),
                          preparation.photo_group("WIN_20261116_13_14_18_Pro (4)"))
         self.assertEqual(preparation.photo_group("WIN_20261116_13_14_01_Pro"),
@@ -19,12 +22,14 @@ class PreparationTests(unittest.TestCase):
                             preparation.photo_group("WIN_20261116_13_14_20_Pro"))
 
     def test_validation_is_balanced_by_image_count(self):
+        # Grupperne er ikke lige store. Fordelingen skal tage hensyn til antallet af billeder.
         groups = {(0, 1): {"a": list(range(6)), "b": list(range(6, 11)),
                            "c": list(range(11, 25)), "d": list(range(25, 34))}}
         split = preparation.assign_splits(groups)
         self.assertEqual(sum(subset == "val" for subset in split.values()), 6)
 
     def test_splits_keep_photo_groups_together_across_classes(self):
+        # En gruppe kan indeholde begge briktyper. Den må stadig ikke deles mellem train/val.
         groups = {
             (0,): {"series1": ["a", "b"], "series2": ["c"], "shared": ["d"]},
             (1,): {"series3": ["e"], "series4": ["f"], "shared": ["g"]},
@@ -37,5 +42,6 @@ class PreparationTests(unittest.TestCase):
         self.assertEqual(set(split.values()), {"train", "val"})
 
     def test_single_photo_group_cannot_be_split_honestly(self):
+        # Uden to adskilte grupper skal klargøringen stoppe og forklare problemet.
         with self.assertRaises(ValueError):
             preparation.assign_splits({(0,): {"only_series": ["a", "b"]}})

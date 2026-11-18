@@ -2,6 +2,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock
 
+# Her testes billedbehandlingen med små, kunstige billeder, så resultatet er forudsigeligt.
 import numpy as np
 
 from vision import debug_detection, detect_debug, draw_debug, orient_frame
@@ -9,6 +10,8 @@ from vision import debug_detection, detect_debug, draw_debug, orient_frame
 
 class VisionTests(unittest.TestCase):
     def test_debug_uses_small_inference_and_draws_on_the_current_frame(self):
+        # Analysér ét billede, men tegn på et nyere billede med en anden størrelse.
+        # Det kontrollerer både skalering og, at originalbillederne ikke ændres.
         box = SimpleNamespace(cls=np.array(0), conf=np.array(.9),
                               xyxy=np.array([[40, 60, 100, 120]]))
         model = Mock(return_value=[SimpleNamespace(names={0: "bolle"}, boxes=[box])])
@@ -23,6 +26,7 @@ class VisionTests(unittest.TestCase):
         np.testing.assert_array_equal(current_frame, 70)
 
     def test_orientation_keeps_pixels_in_expected_positions(self):
+        # Tallene fungerer som genkendelige pixels, så vi kan følge dem ved rotation/spejling.
         frame = np.array([[1, 2, 3], [4, 5, 6]], dtype=np.uint8)
         np.testing.assert_array_equal(orient_frame(frame, 1), [[4, 1], [5, 2], [6, 3]])
         np.testing.assert_array_equal(orient_frame(frame, 0, True), [[3, 2, 1], [6, 5, 4]])
@@ -31,6 +35,7 @@ class VisionTests(unittest.TestCase):
         self.assertTrue(orient_frame(frame, 1, True).flags.c_contiguous)
 
     def test_debug_labels_our_crosses_and_circles(self):
+        # Genkendte klassenavne skal få den rigtige forklaring og sikkerhed i debug.
         image = np.zeros((300, 600, 3), dtype=np.uint8)
         boxes = [SimpleNamespace(cls=np.array(i), conf=np.array(.9),
                                  xyxy=np.array([[20 + i * 180, 40, 150 + i * 180, 200]]))
