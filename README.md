@@ -13,14 +13,14 @@ uv sync
 uv run main.py
 ```
 
-Programmet starter på jeres USB-kamera **1**. Vælg et andet kamera i menuen til højre, og klik **Skift**. Genvejene **0–9** virker også. Numrene afhænger af computeren. Det aktive kameranummer vises øverst. Hvis et kamera ikke virker, beholdes det nuværende. Efter et kameraskift skal brættets fire hjørner markeres igen; spillets træk bevares.
+Programmet starter på jeres USB-kamera **1**. Vælg et andet kamera i menuen til højre, og klik **Skift**. Genvejene **0–9** virker også. Numrene afhænger af computeren. Det aktive kameranummer vises øverst. Hvis et kamera ikke virker, beholdes det nuværende. Efter et kameraskift finder programmet automatisk brættet igen; spillets træk bevares.
 
 I kan også starte direkte på USB-kameraet med `uv run main.py --camera 1`.
 Du kan også installere med `python -m pip install -r requirements.txt` og starte med `python main.py`.
 
 ## Rotation, spejlvending og debug
 
-**Rotér 90°** drejer kamerabilledet med uret. **Spejlvend** vender det vandret; klik igen for at slå spejling fra. Vælg orienteringen inden spillet: ændringer starter et nyt spil og kræver, at brættet tømmes og hjørnerne markeres igen. Genkendelsen bruger samme orientering som visningen.
+**Rotér 90°** drejer kamerabilledet med uret. **Spejlvend** vender det vandret; klik igen for at slå spejling fra. Vælg orienteringen inden spillet: ændringer starter et nyt spil og kræver, at brættet tømmes. Brættet findes igen automatisk. Genkendelsen bruger samme orientering som visningen.
 
 **Debug · live** åbner et separat vindue med vores egen models genkendelse af **Kryds / X** og **Bolle / O**, kasser omkring brikkerne og sikkerhed i procent. Debug bruger de samme modelvægte som spillet. Debug godkender ikke træk; brug fortsat Aflæs brættet i spillet.
 
@@ -31,22 +31,26 @@ Spil og debug bruger samme analyseopløsning, som standard 320 pixels. Små deta
 ## Sådan spiller I
 
 1. Stil kameraet fast, gerne oven over et tomt bræt med 3 × 3 lige store felter.
-2. Klik på brættets fire **ydre** hjørner: øverst venstre, øverst højre, nederst højre, nederst venstre. Programmet retter perspektivet og viser brættet forfra.
+2. Hold hele brættet synligt og stille. Programmet finder trærammen og 3 × 3-gitteret, retter perspektivet og zoomer automatisk ind. Der skal ikke klikkes på hjørnerne.
 3. Læg din X-brik, fjern hænderne, og klik **Aflæs brættet** eller tryk **mellemrum**.
 4. Den grønne cirkel viser computerens træk. Læg en O-brik dér, fjern hænderne, og klik **Bekræft O-brikken** eller tryk **mellemrum** igen.
 5. Fortsæt med din næste X. Vinderen eller uafgjort vises på skærmen.
 
-**Nyt spil** / **R** starter et nyt spil: fjern alle brikker, før du lægger den første X. **Markér hjørner igen** / **K** lader jer markere brættet igen, hvis kameraet flyttes. Spillets træk bevares ved ny hjørnemarkering. **Q** eller **Esc** lukker.
+**Nyt spil** / **R** starter et nyt spil: fjern alle brikker, før du lægger den første X. **Find brættet igen** / **K** genstarter den automatiske søgning uden at slette spillets træk. **Q** eller **Esc** lukker.
+
+Efter første sikre fund låses zoomet fast. Små udsving og kortvarige udfald får ikke visningen til at zoome ind og ud. Ved en reel flytning beholdes den gamle visning, indtil den nye placering er bekræftet i tre søgninger; derefter flyttes zoomet én gang. De godkendte træk og computerens forslag bevares. Et spiltræk kræver altid en frisk, sikker måling af placeringen, også når den gemte zoom stadig vises. **Find brættet igen** nulstiller visningslåsen, hvis I vil tilbage til oversigtsbilledet og begynde søgningen på ny.
+
+Brætsøgningen er lavet til vores lyse træbræt med ni firkantede felter og behøver ingen ny YOLO-træning. Den bruger både ramme/gitter og de ni blå felters eller brikkers placering. Det hjælper på det tomme webcambræt, hvor bløde kanter og lignende baggrundsfarver gør trærammen svær at følge. Hele rammen og gitteret skal kunne ses i rimeligt lys. Andre typer brætter kan kræve tilpasning. Undgå store drejninger, mens brættet er helt skjult: et symmetrisk bræt har ikke en unik top/bund, som kan genfindes sikkert efter sådan en flytning. Start et nyt spil, hvis den fysiske orientering er ændret på den måde.
 
 Det lille bræt til højre viser sidst godkendte træk. En stiplet grøn cirkel viser, hvor computerens næste brik skal placeres. Ved en fejlaflæsning beholdes tilstanden, og du kan aflæse igen. Programmet kræver ét nyt træk ad gangen; aflæs derfor også efter at have lagt computerens brik.
 
-At debug genkender brikker betyder ikke nødvendigvis, at et træk kan godkendes. Spillet kræver korrekt hjørnemarkering og en lovlig tur. Ved start skal der kun ligge én X og ingen O. Spillets beskeder skelner mellem ingen genkendte brikker, fund uden for det markerede bræt og en forkert startopstilling.
+At debug genkender brikker betyder ikke nødvendigvis, at et træk kan godkendes. Spillet kræver et sikkert fundet bræt og en lovlig tur. Ved start skal der kun ligge én X og ingen O. Spillets beskeder skelner mellem ingen genkendte brikker, fund uden for brættet og en forkert startopstilling.
 
 ## Brikker og model
 
 Ved spillets aflæsning genkendes brikkerne i det fulde, orienterede kamerabillede. Deres midtpunkter overføres derefter til det markerede 3 × 3-bræt. Fund uden for brættet ignoreres. Det undgår, at perspektivopretningen og forstørrelsen af brikkerne forringer modellens genkendelse.
 
-Spillet bruger vores model, trænet på de 614 egne billeder og Make Sense-markeringer. Der er kun to klasser: **kryds** og **bolle**. Standardmodellen ligger i `train-demo/runs/detect/egne-brikker/weights/best.pt`, så almindelig opstart kræver kun `uv run main.py`.
+Spillet bruger vores egen trænede model og Make Sense-markeringer. Der er kun to klasser: **kryds** og **bolle**. Standardmodellen ligger i `train-demo/runs/detect/nye-brikker/weights/best.pt`, så almindelig opstart kræver kun `uv run main.py`.
 
 Træn modellen igen med:
 
@@ -64,7 +68,8 @@ Hvis kameraet ikke åbner, prøv `--camera 1`, luk andre kamera-apps og kontroll
 
 ## Filer
 
-- `main.py`: webcam, hjørnemarkering og YOLO.
+- `main.py`: webcam, automatisk zoom og YOLO.
+- `board_detection.py`: finder brættets ramme/gitter og følger det ved flytning.
 - `ui.py`: spilvindue, kameravælger, knapper og overblik.
 - `vision.py`: rotation, spejlvending og debugmarkeringer.
 - `game.py`: regler, turstyring og computerens træk.

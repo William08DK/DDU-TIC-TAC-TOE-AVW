@@ -18,7 +18,7 @@ LINE = "#dce5e0"
 
 
 class GameWindow:
-    def __init__(self, on_action, on_point, camera_index):
+    def __init__(self, on_action, camera_index):
         # root er hovedvinduet. Tkinter er Pythons bibliotek til vinduer og knapper.
         self.root = tk.Tk()
         self.root.title("Kryds & bolle")
@@ -26,11 +26,9 @@ class GameWindow:
         self.root.geometry("1120x790")
         self.root.minsize(980, 740)
         self.root.option_add("*Font", "{Segoe UI} 10")
-        # Disse funktioner kommer fra main.py. Brugerfladen fortæller, hvad der blev
+        # Funktionen kommer fra main.py. Brugerfladen fortæller, hvad der blev
         # klikket på; main.py udfører handlingen og styrer kameraet og spillereglerne.
         self.on_action = on_action
-        self.on_point = on_point
-        self.image_bounds = None  # Hvor selve kamerabilledet ligger inde i videofeltet.
         self.photo = None
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_action("quit"))
 
@@ -59,7 +57,7 @@ class GameWindow:
         camera_header = tk.Frame(camera_card, bg=WHITE)
         camera_header.pack(fill="x", padx=18, pady=16)
         self.label(camera_header, "Dit spillebræt", 13, bold=True).pack(side="left")
-        self.step = self.label(camera_header, "1 / 2 · Markér brættet", 10, GREEN)
+        self.step = self.label(camera_header, "Søger efter brættet …", 10, GREEN)
         self.step.pack(side="right")
         # Knapperne sender korte handlingsnavne til main.py; de behandler ikke billeder.
         tools = tk.Frame(camera_card, bg=WHITE)
@@ -76,7 +74,6 @@ class GameWindow:
         self.video = tk.Label(camera_card, bg="#142823", fg="#e2ebe6", bd=0,
                               compound="center", font=("Segoe UI", 16))
         self.video.pack(fill="both", expand=True, padx=12)
-        self.video.bind("<Button-1>", self.click_video)  # Venstre museknap markerer hjørner.
         self.hint = self.label(camera_card, "", 10, MUTED)
         self.hint.pack(fill="x", padx=18, pady=16)
 
@@ -85,7 +82,7 @@ class GameWindow:
         sidebar.grid(row=0, column=1, sticky="nsew")
         sidebar.grid_propagate(False)
         self.label(sidebar, "NÆSTE TRIN", 9, MUTED, bold=True, bg=BG).pack(anchor="w")
-        self.heading = self.label(sidebar, "Markér brættet", 19, bold=True, bg=BG)
+        self.heading = self.label(sidebar, "Finder brættet", 19, bold=True, bg=BG)
         self.heading.pack(anchor="w", pady=(4, 6))
         self.message = self.label(sidebar, "", 10, MUTED, bg=BG)
         # Teksten må fylde tre linjer, så knapperne ikke hopper ved hver ny besked.
@@ -117,9 +114,9 @@ class GameWindow:
         self.camera.set(f"Kamera {camera_index}")
         self.camera.pack(side="left", fill="x", expand=True, ipady=4)
         self.button(camera_row, "Skift", "camera").pack(side="left", padx=(8, 0))
-        self.button(sidebar, "Markér hjørner igen", "calibrate").pack(fill="x", pady=(8, 6))
+        self.button(sidebar, "Find brættet igen", "calibrate").pack(fill="x", pady=(8, 6))
         self.button(sidebar, "Nyt spil", "reset").pack(fill="x")
-        self.label(self.root, "Mellemrum: aflæs     ·     K: markér hjørner     ·     R: nyt spil     ·     0–9: kamera     ·     Esc: luk",
+        self.label(self.root, "Mellemrum: aflæs     ·     K: find brættet igen     ·     R: nyt spil     ·     0–9: kamera     ·     Esc: luk",
                    9, MUTED, bg=BG).pack(side="bottom", before=body, pady=12)
 
         self.root.bind("<KeyPress>", self.keypress)  # Tastetryk bliver til de samme handlinger som knapper.
@@ -204,38 +201,24 @@ class GameWindow:
             # "break" fortæller Tkinter, at tastetrykket er håndteret.
             return "break"
 
-    def click_video(self, event):
-        # Billedet kan have mørke kanter, fordi kamera og vindue har forskellig form.
-        # Ignorér klik i kanterne, og omregn resten til det oprindelige billedes pixels.
-        if self.image_bounds:
-            left, top, width, height, source_width, source_height = self.image_bounds
-            if left <= event.x < left + width and top <= event.y < top + height:
-                self.on_point((event.x - left) * source_width / width,
-                              (event.y - top) * source_height / height)
-
-    def show(self, frame, game, calibrated, points, ready, status, camera_index):
+    def show(self, frame, game, board_ready, ready, status, camera_index, tracking_ready=True):
         # main.py kalder show igen og igen med det aktuelle billede og spillets tilstand.
         image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        source_width, source_height = image.size
         width, height = max(1, self.video.winfo_width()), max(1, self.video.winfo_height())
         image.thumbnail((width, height), Image.Resampling.BILINEAR)  # Behold højde/bredde-forholdet.
-        # Gem placering og størrelse til omregningen af museklik i click_video().
-        self.image_bounds = ((width - image.width) // 2, (height - image.height) // 2,
-                             image.width, image.height, source_width, source_height)
         self.photo = ImageTk.PhotoImage(image)
         self.video.configure(image=self.photo,
                              text="" if ready else "Intet kamerabillede\nVælg dit USB-kamera til højre")
         self.connection.configure(text=f"●  Kamera {camera_index} · {'Tilsluttet' if ready else 'Intet billede'}",
                                   fg=GREEN if ready else "#a35b2b")
         # Find den besked, der hjælper brugeren videre lige nu. Rækkefølgen er vigtig:
-        # kamera -> hjørner -> afsluttet spil -> computerens tur -> spillerens tur.
+        # kamera -> automatisk brætsøgning -> afsluttet spil -> hvis tur det er.
         result = outcome(game.board)
         if not ready:
             heading, hint = "Vælg dit kamera", "Tilslut USB-kameraet, vælg et nummer og klik Skift."
-        elif not calibrated:
-            corners = ("øverste venstre", "øverste højre", "nederste højre", "nederste venstre")
-            heading = "Markér brættet"
-            hint = f"Klik på {corners[len(points)]} hjørne ({len(points) + 1}/4)." if len(points) < 4 else "Klik Markér hjørner igen for at prøve på ny."
+        elif not board_ready:
+            heading = "Finder brættet"
+            hint = "Hold hele brættet synligt og stille, og fjern hænderne. Der zoomes automatisk ind."
         elif result:
             heading = {"X": "Du vandt!", "O": "Computeren vandt", "draw": "Uafgjort!"}[result]
             hint = "Godt spil. Klik Nyt spil, og fjern alle brikker."
@@ -245,12 +228,15 @@ class GameWindow:
             hint = f"Læg O i række {row + 1}, kolonne {col + 1}. Bekræft med Aflæs brættet."
         else:
             heading, hint = "Din tur", "Læg én X-brik, fjern hænderne, og klik Aflæs brættet."
+        if board_ready and not tracking_ready:
+            hint = "Zoom fastholdes. Hold brættet frit og stille; aflæsning kræver en sikker placering."
         self.heading.configure(text=heading)
-        self.message.configure(text=(status or hint) if ready else hint)
+        self.message.configure(text=(status or hint) if ready and board_ready else hint)
         self.hint.configure(text=hint, wraplength=max(200, width - 24), justify="left")
-        self.step.configure(text="2 / 2 · Klar til spil" if calibrated else f"1 / 2 · Hjørner {len(points)}/4")
-        # Aflæsning giver kun mening med kamera, markerede hjørner og et igangværende spil.
-        self.read_button.configure(state="normal" if ready and calibrated and not result else "disabled",
+        self.step.configure(text="Brættet er fastlåst" if board_ready else "Søger efter brættet …")
+        # Knappen kan kontrollere placeringen igen. main.py godkender aldrig et
+        # træk alene ud fra den gemte visningslås, hvis søgningen aktuelt er usikker.
+        self.read_button.configure(state="normal" if ready and board_ready and not result else "disabled",
                                    text="Bekræft O-brikken  →" if game.pending is not None else "Aflæs brættet  →")
         self.draw_overview(game)
 
