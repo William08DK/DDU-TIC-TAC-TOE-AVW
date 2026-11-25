@@ -28,7 +28,7 @@ Debug analyserer hele det orienterede kamerabillede, ligesom spillets aflæsning
 
 Spil og debug bruger samme analyseopløsning, som standard 320 pixels. Små detaljer kan genkendes bedre med `--imgsz 640`, som også kræver mere regnetid; 480 er et mellemtrin. Indstillingen gælder begge visninger, og den tidligere genvej `--debug-imgsz` virker også. Hastigheden afhænger af computeren.
 
-## Sådan spiller I
+## Sådan spiller du
 
 1. Stil kameraet fast, gerne oven over et tomt bræt med 3 × 3 lige store felter.
 2. Hold hele brættet synligt og stille. Programmet finder trærammen og 3 × 3-gitteret, retter perspektivet og zoomer automatisk ind. Der skal ikke klikkes på hjørnerne.
