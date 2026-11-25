@@ -6,6 +6,16 @@ Computeren kan ikke tabe fra et tomt bræt ved lovligt spil: den gennemregner al
 
 ## Start
 
+Hvis dette er din første gang bør du træne modellen.
+
+Træn model:
+```powershell
+uv sync
+uv run train-demo/model-train.py
+uv run main.py
+```
+
+
 Kør fra projektmappen:
 
 ```powershell
