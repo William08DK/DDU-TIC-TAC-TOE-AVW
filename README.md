@@ -1,5 +1,5 @@
 ﻿# Kryds og bolle med webcam
-
+hey
 Et fysisk 3 × 3-bræt aflæses med YOLO. Du spiller X og starter. Computeren spiller O og viser sit næste træk med en grøn cirkel på skærmen. Du flytter selv begge spilleres brikker. Computeren vælger træk med minimax.
 
 Computeren kan ikke tabe fra et tomt bræt ved lovligt spil: den gennemregner alle mulige fortsættelser, vælger en sikker sejr, hvis muligt, og sikrer ellers uafgjort. Den vælger den hurtigste sikre sejr. Det kræver intet datasæt til strategi; YOLO-modellen skal kun genkende brikkerne korrekt. Garantien gælder det aflæste bræt og forudsætter, at computerens brikker placeres i de foreslåede felter.
